@@ -1,0 +1,105 @@
+openapi: 3.0.1
+info:
+  title: Shipfast API Documentation
+  version: 1.0.0
+  description: API Documentation for Shipfast Shipping Aggregator Platform
+servers:
+  - url: https://shazam.velocity.in
+paths:
+  /custom/api/v1/auth-token:
+    post:
+      summary: Obtain Authentication Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: '+91xxxxxxxxx'
+                  description: Mobile number with country code
+                password:
+                  type: string
+                  example: 'yourpassword'
+                  description: Account password
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+  /custom/api/v1/serviceability:
+    post:
+      summary: Check Serviceability
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  type: string
+                  example: '560068'
+                  description: Source PIN code
+                to:
+                  type: string
+                  example: '560068'
+                  description: Destination PIN code
+                payment_mode:
+                  type: string
+                  enum: [cod, prepaid]
+                  example: 'cod'
+                shipment_type:
+                  type: string
+                  enum: [forward, reverse]
+                  example: 'forward'
+              required:
+                - from
+                - to
+                - payment_mode
+                - shipment_type
+      responses:
+        '200':
+          description: Serviceability response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceable:
+                    type: boolean
+                  available_couriers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        courier:
+                          type: string
+                        mode:
+                          type: string
+                        cod_supported:
+                          type: boolean
+                        edd_days:
+                          type: integer
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - ApiKeyAuth: []
